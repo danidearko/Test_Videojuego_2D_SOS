@@ -15,65 +15,32 @@ public class MovPersonaje : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        transform.position = new Vector3(-9.3f, 3.7f, 0);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        float movTeclas = Input.GetAxis("Horizontal"); //(a -1f - d 1f)
-    //  float movTeclasY = Input.GetAxis("Vertical"); //(a -1f - d 1f)
-
-        // aproximación 1 
-       /* transform.position = new Vector 3 (
-            transform.position.x+(movTeclas/100),
-            transform.position.y,
-            transform.position.z
-        )*/
-
         float miDeltaTime = Time.deltaTime;
 
-        // Debug.Log(Time.deltaTime);
-
-        /*
-        transform.Translate(
-            movTeclas*(Time.deltaTime*multiplicador),
-            0,
-            0
-        );*/
-
-
-
-
-
-        //Movimiento Personaje 
+        //CHARACTER MOVEMENT
+        float movTeclas = Input.GetAxis("Horizontal"); //(a -1f - d 1f)
+    //  float movTeclasY = Input.GetAxis("Vertical"); //(a -1f - d 1f)
 
         rb.velocity =  new Vector2(movTeclas*multiplicador, rb.velocity.y);
 
 
         // Flip <-- LEFT
-         if(Input.GetKeyDown(KeyCode.A)){
-                       // this.GetComponent<SpriteRenderer>().flipX = true;
-                       transform.localScale = new Vector3(-1, 1, 1);
-         
+         if(movTeclas < 0){
+                        this.GetComponent<SpriteRenderer>().flipX = true;         
+         }else if(movTeclas > 0){
+                      this.GetComponent<SpriteRenderer>().flipX = false;         
          }
 
 
-        // Flip --> RIGHT
-         if(Input.GetKeyDown(KeyCode.D)){
-                       // this.GetComponent<SpriteRenderer>().flipX = false;
-                       transform.localScale = new Vector3(1, 1, 1);
-         
-         }
-
-    
-        
-
-
-
-
-
-
-        //El mejor salto que haya podido existir en la historia del Videojuego contemporáneo 
+        //JUMP JUMP!
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.8f);
         Debug.DrawRay(transform.position, Vector2.down, Color.magenta);
