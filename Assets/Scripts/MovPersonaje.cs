@@ -10,19 +10,29 @@ public class MovPersonaje : MonoBehaviour
 
     private bool puedoSaltar = true;
     private Rigidbody2D rb;
+    private Animator animatorController;
+     GameObject respawn;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = this.GetComponent<Rigidbody2D>();
 
-        transform.position = new Vector3(-9.3f, 3.7f, 0);
+        animatorController = this.GetComponent<Animator>();
 
+        respawn = GameObject.Find("Respawn");
+        transform.position = respawn.transform.position;
+
+        Respawnear();
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        if(GameManager.estoyMuerto) return;
+
         float miDeltaTime = Time.deltaTime;
 
         //CHARACTER MOVEMENT
@@ -32,12 +42,33 @@ public class MovPersonaje : MonoBehaviour
         rb.velocity =  new Vector2(movTeclas*multiplicador, rb.velocity.y);
 
 
-        // Flip <-- LEFT
+        // LEFT
          if(movTeclas < 0){
-                        this.GetComponent<SpriteRenderer>().flipX = true;         
+            this.GetComponent<SpriteRenderer>().flipX = true;  
          }else if(movTeclas > 0){
-                      this.GetComponent<SpriteRenderer>().flipX = false;         
+        // RIGHT
+            this.GetComponent<SpriteRenderer>().flipX = false;
          }
+
+         //WALKING ANIMATION 
+        if(movTeclas != 0){
+            animatorController.SetBool("activaCamina", true);
+        }else{
+            animatorController.SetBool("activaCamina", false);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         //JUMP JUMP!
@@ -47,7 +78,7 @@ public class MovPersonaje : MonoBehaviour
 
         if(hit){
             puedoSaltar = true;
-            Debug.Log(hit.collider.name);
+            // Debug.Log(hit.collider.name);
         }else{
             puedoSaltar = false;
         }
@@ -57,16 +88,37 @@ public class MovPersonaje : MonoBehaviour
                 new Vector2(0,multiplicadorSalto),
                 ForceMode2D.Impulse
           );
-        // puedoSaltar = false;
-        }               
+        }   
+
+        //COMPROBAR SI HE SALIDO DE LA PANTALLA POR ABAJO 
+
+        if(transform.position.y <= -4){
+            Respawnear();
+        }
+
+        // 0 VIDAS 
+
+            if(GameManager.vidas <= 0)
+            {
+                GameManager.estoyMuerto = true;
+            }
+
+
+
+    }
+    
+
+   public void Respawnear(){
+
+    Debug.Log("vidas" +GameManager.vidas);
+    GameManager.vidas = GameManager.vidas - 1 ;
+    Debug.Log("vidas" +GameManager.vidas);
+
+
+    transform.position = respawn.transform.position;
     }
 
-    /*
-    void OnCollisionEnter2D(){
-         puedoSaltar = true;
-         Debug.Log("Colision! OMG");
-    }*/
-
+    
 
 
 
