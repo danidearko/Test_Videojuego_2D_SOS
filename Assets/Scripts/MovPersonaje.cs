@@ -5,10 +5,12 @@ using UnityEngine;
 public class MovPersonaje : MonoBehaviour
 {
 
+    public float velocidad = 5f;
     public float multiplicador = 5f;
     public float multiplicadorSalto = 5f;
 
     private bool puedoSaltar = true;
+    public bool miraDerecha = true;
     private Rigidbody2D rb;
     private Animator animatorController;
      GameObject respawn;
@@ -45,9 +47,11 @@ public class MovPersonaje : MonoBehaviour
         // LEFT
          if(movTeclas < 0){
             this.GetComponent<SpriteRenderer>().flipX = true;  
+            miraDerecha = false;
          }else if(movTeclas > 0){
         // RIGHT
             this.GetComponent<SpriteRenderer>().flipX = false;
+            miraDerecha = true;
          }
 
          //WALKING ANIMATION 
