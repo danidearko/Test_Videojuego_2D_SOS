@@ -4,125 +4,119 @@ using UnityEngine;
 
 public class MovPersonaje : MonoBehaviour
 {
-
     public float velocidad = 5f;
     public float multiplicador = 5f;
     public float multiplicadorSalto = 5f;
 
+    float movTeclas;
     private bool puedoSaltar = true;
+    private bool activaSaltoFixed = false; 
     public bool miraDerecha = true;
     private Rigidbody2D rb;
     private Animator animatorController;
-     GameObject respawn;
+    GameObject respawn;
+    bool soyAzul;
 
-
-    // Start is called before the first frame update
     void Start()
     {
-        rb = this.GetComponent<Rigidbody2D>();
-
-        animatorController = this.GetComponent<Animator>();
-
+        rb = GetComponent<Rigidbody2D>();
+        animatorController = GetComponent<Animator>();
         respawn = GameObject.Find("Respawn");
         transform.position = respawn.transform.position;
-
         Respawnear();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (GameManager.estoyMuerto) return;
 
-        if(GameManager.estoyMuerto) return;
+        // CHARACTER MOVEMENT
+        movTeclas = Input.GetAxis("Horizontal");
 
-        float miDeltaTime = Time.deltaTime;
-
-        //CHARACTER MOVEMENT
-        float movTeclas = Input.GetAxis("Horizontal"); //(a -1f - d 1f)
-    //  float movTeclasY = Input.GetAxis("Vertical"); //(a -1f - d 1f)
-
-        rb.velocity =  new Vector2(movTeclas*multiplicador, rb.velocity.y);
-
-
-        // LEFT
-         if(movTeclas < 0){
-            this.GetComponent<SpriteRenderer>().flipX = true;  
+        // LEFT & RIGHT
+        if (movTeclas < 0)
+        {
+            GetComponent<SpriteRenderer>().flipX = true;
             miraDerecha = false;
-         }else if(movTeclas > 0){
-        // RIGHT
-            this.GetComponent<SpriteRenderer>().flipX = false;
+        }
+        else if (movTeclas > 0)
+        {
+            GetComponent<SpriteRenderer>().flipX = false;
             miraDerecha = true;
-         }
-
-         //WALKING ANIMATION 
-        if(movTeclas != 0){
-            animatorController.SetBool("activaCamina", true);
-        }else{
-            animatorController.SetBool("activaCamina", false);
         }
 
+        // WALKING ANIMATION
+        animatorController.SetBool("activaCamina", movTeclas != 0);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //JUMP JUMP!
-
+        // JUMP JUMP!
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.8f);
         Debug.DrawRay(transform.position, Vector2.down, Color.magenta);
 
-        if(hit){
+        if (hit)
+        {
             puedoSaltar = true;
-            // Debug.Log(hit.collider.name);
-        }else{
+        }
+        else
+        {
             puedoSaltar = false;
         }
- 
-        if(Input.GetKeyDown(KeyCode.Space) && puedoSaltar ){
-            rb.AddForce(
-                new Vector2(0,multiplicadorSalto),
-                ForceMode2D.Impulse
-          );
-        }   
 
-        //COMPROBAR SI HE SALIDO DE LA PANTALLA POR ABAJO 
+        if (Input.GetKeyDown(KeyCode.Space) && puedoSaltar)
+        {
+            activaSaltoFixed = true;
+        }
 
-        if(transform.position.y <= -4){
+        // COMPROBAR SI HE SALIDO DE LA PANTALLA POR ABAJO
+        if (transform.position.y <= -4)
+        {
             Respawnear();
         }
 
-        // 0 VIDAS 
-
-            if(GameManager.vidas <= 0)
-            {
-                GameManager.estoyMuerto = true;
-            }
-
-
-
-    }
-    
-
-   public void Respawnear(){
-
-    Debug.Log("vidas" +GameManager.vidas);
-    GameManager.vidas = GameManager.vidas - 1 ;
-    Debug.Log("vidas" +GameManager.vidas);
-
-
-    transform.position = respawn.transform.position;
+        // 0 VIDAS
+        if (GameManager.vidas <= 0)
+        {
+            GameManager.estoyMuerto = true;
+        }
     }
 
-    
+    void FixedUpdate()
+    {
+        if (!activaSaltoFixed)
+        {
+            rb.velocity = new Vector2(movTeclas * multiplicador, rb.velocity.y);
+        }
+        else
+        {
+            rb.AddForce(new Vector2(0, multiplicadorSalto), ForceMode2D.Impulse);
+            activaSaltoFixed = false;
+        }
+    }
+
+    public void Respawnear()
+    {
+        Debug.Log("vidas" + GameManager.vidas);
+        GameManager.vidas -= 1;
+        Debug.Log("vidas" + GameManager.vidas);
+        transform.position = respawn.transform.position;
+    }
+
+
+
+    public void CambiarColor(){
+
+
+        if(soyAzul){
+              this.GetComponent<SpriteRenderer>().color = Color.white;
+              soyAzul = false;
+        }else{
+              this.GetComponent<SpriteRenderer>().color = Color.blue;
+              soyAzul = true;
+
+        }
+      
+
+    }
+
 
 
 
