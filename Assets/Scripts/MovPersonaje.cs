@@ -17,6 +17,8 @@ public class MovPersonaje : MonoBehaviour
     GameObject respawn;
     bool soyAzul;
 
+    Animator animacioncaminado;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -38,11 +40,13 @@ public class MovPersonaje : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().flipX = true;
             miraDerecha = false;
+            animatorController.SetBool("activaCamina", false);
         }
         else if (movTeclas > 0)
         {
             GetComponent<SpriteRenderer>().flipX = false;
             miraDerecha = true;
+            animatorController.SetBool("activaCamina", true);
         }
 
         // WALKING ANIMATION
