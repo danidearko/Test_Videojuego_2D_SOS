@@ -10,7 +10,7 @@ public class MovPersonaje : MonoBehaviour
 
     float movTeclas;
     private bool puedoSaltar = true;
-    private bool activaSaltoFixed = false; 
+    private bool activaSaltoFixed = false;
     public bool miraDerecha = true;
     private Rigidbody2D rb;
     private Animator animatorController;
@@ -73,6 +73,7 @@ public class MovPersonaje : MonoBehaviour
         // COMPROBAR SI HE SALIDO DE LA PANTALLA POR ABAJO
         if (transform.position.y <= -4)
         {
+            AudioManager.Instance.SonarClipUnaVez(AudioManager.Instance.fxDead);
             Respawnear();
         }
 
@@ -104,24 +105,37 @@ public class MovPersonaje : MonoBehaviour
         transform.position = respawn.transform.position;
     }
 
-
-
-    public void CambiarColor(){
-
-
-        if(soyAzul){
-              this.GetComponent<SpriteRenderer>().color = Color.white;
-              soyAzul = false;
-        }else{
-              this.GetComponent<SpriteRenderer>().color = Color.blue;
-              soyAzul = true;
-
+    public void CambiarColor()
+    {
+        if (soyAzul)
+        {
+            this.GetComponent<SpriteRenderer>().color = Color.white;
+            soyAzul = false;
         }
-      
-
+        else
+        {
+            this.GetComponent<SpriteRenderer>().color = Color.blue;
+            soyAzul = true;
+        }
     }
 
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        Debug.Log(col.gameObject.name);
 
+        if (col.gameObject.name == "Tunel")
+        {
+            // Asegúrate de que la instancia del AudioManager está correctamente referenciada
+            AudioManager.Instance.IniciarEfectoTunel();
+        }
+    }
 
-
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.gameObject.name == "Tunel")
+        {
+            // Asegúrate de que la instancia del AudioManager está correctamente referenciada
+            AudioManager.Instance.IniciarEfectoDefault();
+        }
+    }
 }

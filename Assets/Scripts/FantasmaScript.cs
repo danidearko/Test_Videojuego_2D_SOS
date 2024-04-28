@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FantasmaScript : MonoBehaviour
 {
+    AudioSource _audiosource;
     Vector3 posicionInicial;
     GameObject personaje;
     public float velocidadFantasma = 5.0f;
@@ -14,6 +15,8 @@ public class FantasmaScript : MonoBehaviour
         posicionInicial = transform.position;
         // Encuentra al jugador usando la etiqueta "Player"
         personaje = GameObject.FindGameObjectWithTag("Player");
+
+        _audiosource = this.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -25,13 +28,24 @@ public class FantasmaScript : MonoBehaviour
 
         if (distancia <= 4.1f) 
         {
-            //Debug.DrawLine(transform.position, personaje.transform.position, Color.red, 2.5f);
+            // Si la distancia es menor o igual a 4.1, mueve el fantasma hacia el jugador
             transform.position = Vector3.MoveTowards(transform.position, personaje.transform.position, velocidadFinal);
+            if (!_audiosource.isPlaying)
+            {
+                _audiosource.Play();
+            }
         } 
         else 
         {
-            //Debug.DrawLine(transform.position, posicionInicial, Color.white, 2.5f);
+            // Si no, mueve el fantasma de regreso a su posición inicial
             transform.position = Vector3.MoveTowards(transform.position, posicionInicial, velocidadFinal);
+
+            if((transform.position == posicionInicial) && _audiosource.isPlaying == true){
+                            _audiosource.Stop();
+                            Debug.Log("STOP RIGHT NOW!");
+            }
+
         }
     }
 }
+

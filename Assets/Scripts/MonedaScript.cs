@@ -26,7 +26,7 @@ public class MonedaScript : MonoBehaviour
         {
             GameManager.puntos += 1;
             miAnimadorController.SetBool("monedaDestruir", true);
-
+            AudioManager.Instance.SonarClipUnaVez(AudioManager.Instance.fxCoin);
             Destroy(gameObject, 0f); // Destruye la moneda después de 4 segundos
         }
     }

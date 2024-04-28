@@ -17,10 +17,9 @@ public class Dead : MonoBehaviour
     // Método llamado cuando ocurre una colisión con un trigger
     void OnTriggerEnter2D(Collider2D col)
     {
-        // Verificar si la colisión ocurrió con el personaje
         if (col.gameObject == personaje)
         {
-            // Activar la lógica de muerte y respawn del personaje
+            AudioManager.Instance.SonarClipUnaVez(AudioManager.Instance.fxDead);
             movPersonaje.Respawnear();
         }
     }
